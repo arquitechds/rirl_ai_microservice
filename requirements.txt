@@ -1,0 +1,3 @@
+boto3>=1.28,<2
+PyMySQL[rsa]==1.1.2
+openai>=2.6.1,<3
