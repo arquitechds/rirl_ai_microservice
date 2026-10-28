@@ -1,0 +1,71 @@
+{
+  "family": "rirl-union-dues",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ECS_EXECUTION_ROLE",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/UNION_DUES_TASK_ROLE",
+  "containerDefinitions": [
+    {
+      "name": "worker",
+      "image": "ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com/rirl-union-dues:IMAGE_TAG",
+      "essential": true,
+      "stopTimeout": 120,
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "MYSQL_HOST"
+        },
+        {
+          "name": "DB_USER",
+          "value": "MYSQL_USER"
+        },
+        {
+          "name": "AWS_DEFAULT_REGION",
+          "value": "us-east-2"
+        },
+        {
+          "name": "S3_BUCKET",
+          "value": "rirl-documents"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "DATABASE_NAME"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "DB_SSLMODE",
+          "value": "require"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-2:ACCOUNT_ID:secret:DB_PASSWORD_SECRET"
+        },
+        {
+          "name": "OPENROUTER_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-2:ACCOUNT_ID:secret:OPENROUTER_KEY_SECRET"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/rirl-union-dues",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "worker"
+        }
+      }
+    }
+  ]
+}
